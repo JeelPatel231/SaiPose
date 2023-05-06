@@ -1,0 +1,69 @@
+query MangaBaseline($page: Int!, $perPage : Int!, $sort: [MediaSort!]!, $format: MediaFormat) {
+    Page(page: $page, perPage: $perPage){
+        media(type: MANGA, sort: $sort, format: $format){
+            id
+            idMal
+            title {
+                english
+                romaji
+                userPreferred
+                native
+            }
+            coverImage {
+                large
+            }
+            bannerImage
+            status
+            chapters
+            volumes
+            isAdult
+            meanScore
+        }
+    }
+}
+
+query MangaDetails($id: Int!){
+    Media(id: $id){
+        id
+        idMal
+        title {
+            english
+            romaji
+            native
+            userPreferred
+        }
+        coverImage {
+            large
+        }
+        bannerImage
+        chapters
+        volumes
+        status
+        description
+        genres
+    }
+}
+
+query MangaSearch($search: String!, $page:Int = 1, $perPage:Int = 30){
+    Page(page: $page, perPage: $perPage){
+        media(search: $search, type: MANGA){
+            id
+            idMal
+            title {
+                english
+                romaji
+                userPreferred
+                native
+            }
+            coverImage {
+                large
+            }
+            bannerImage
+            status
+            chapters
+            volumes
+            isAdult
+            meanScore
+        }
+    }
+}

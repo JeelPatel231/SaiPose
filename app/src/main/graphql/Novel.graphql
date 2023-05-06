@@ -1,0 +1,23 @@
+query NovelBaseline($page: Int!, $perPage : Int!, $sort: [MediaSort!]!) {
+    Page(page: $page, perPage: $perPage){
+        media(type: MANGA, sort: $sort, format: NOVEL){
+            id
+            idMal
+            title {
+                english
+                romaji
+                userPreferred
+                native
+            }
+            coverImage {
+                large
+            }
+            bannerImage
+            status
+            chapters
+            volumes
+            isAdult
+            meanScore
+        }
+    }
+}

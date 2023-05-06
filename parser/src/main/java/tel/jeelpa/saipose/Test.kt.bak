@@ -1,0 +1,64 @@
+package tel.jeelpa
+
+import kotlinx.coroutines.runBlocking
+import tel.jeelpa.saipose.extractor.FPlayer
+import tel.jeelpa.saipose.extractor.GogoCDN
+import tel.jeelpa.saipose.extractor.PStream
+import tel.jeelpa.saipose.extractor.RapidCloud
+import tel.jeelpa.saipose.extractor.StreamSB
+import tel.jeelpa.saipose.extractor.StreamTape
+import tel.jeelpa.saipose.extractor.VidStreaming
+import tel.jeelpa.saipose.parser.AnimePahe
+import tel.jeelpa.saipose.parser.ConsumeBili
+import tel.jeelpa.saipose.parser.Consumet9Anime
+import tel.jeelpa.saipose.parser.Marin
+import tel.jeelpa.saipose.reference.asyncMapNotNull
+import tel.jeelpa.saipose.reference.initializeNetwork
+import tel.jeelpa.saipose.reference.printIt
+import tel.jeelpa.saipose.parser.AllAnime
+import tel.jeelpa.saipose.parser.Gogo
+import tel.jeelpa.saipose.reference.ParserMap
+import tel.jeelpa.saipose.reference.ExtractorMap
+
+class Test {
+    companion object {
+        fun initMaps() {
+            ParserMap["Gogo"] = Gogo()
+            ParserMap["AllAnime"] = AllAnime()
+            ParserMap["AnimePahe"] = AnimePahe()
+            ParserMap["ConsumeBili"] = ConsumeBili()
+            ParserMap["Consumet9Anime"] = Consumet9Anime()
+            ParserMap["Marin"] = Marin()
+
+            ExtractorMap["FPlayer"] = FPlayer()
+            ExtractorMap["GogoCDN"] = GogoCDN()
+            ExtractorMap["PStream"] = PStream()
+            ExtractorMap["RapidCloud"] = RapidCloud()
+            ExtractorMap["StreamSB"] = StreamSB()
+            ExtractorMap["StreamTape"] = StreamTape()
+            ExtractorMap["VidStreaming"] = VidStreaming()
+        }
+
+        fun doTest() = runBlocking {
+            val mediaService = ParserMap["AnimePahe"]!!
+            val searchResults = mediaService.search("lycoris recoil").printIt("Search : ")
+            val episode = mediaService.loadEpisodes(searchResults.first().link, null).printIt("Episode : ")
+            val videoServer = mediaService.loadVideoServers(episode[0].link, null)
+//                .filter { "gogo" in it.embed.url || "goload" in it.embed.url }
+                .printIt("Video Server : ")
+            videoServer.asyncMapNotNull {
+                mediaService.extractVideo(it)?.videos?.printIt("Video Links : ")
+            }.printIt("Video Links : ")
+            println("DONE")
+        }
+
+
+
+        @JvmStatic
+        fun main(args: Array<String>) {
+            initializeNetwork()
+            initMaps()
+            doTest()
+        }
+    }
+}
